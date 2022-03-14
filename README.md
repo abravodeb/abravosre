@@ -25,44 +25,59 @@ para el correcto funcionamiento, las imagen "api y listener" se realizó un push
 ## Secuencia en asciinema
 
 Para visualizar el proceso de despligue y funcionamiento por favor revisar link adjunto.  
-[click acá](url)
+
+[click acá](https://asciinema.org/a/Rie6gVq2VCb14b98VE1ooE2gh)
 
 o click directamente en la imagen  
 
-url de la imagen  
+[![asciicast](https://asciinema.org/a/14.png)](https://asciinema.org/a/Rie6gVq2VCb14b98VE1ooE2gh)
 
 ## Validacion y funcionamiento de la app
 
 ``` 
-❯ k get all
-NAME                            READY   STATUS    RESTARTS       AGE
-pod/api-84c644846f-mx2dj        1/1     Running   1 (4h5m ago)   37h
-pod/db-76b9688787-n55ng         1/1     Running   1 (4h5m ago)   37h
-pod/listener-7fc8675d8f-jbp5q   1/1     Running   2 (4h4m ago)   37h
-pod/rabbitmq-7f66f5c6f8-cfljw   1/1     Running   1 (4h5m ago)   37h
+[ec2-user@ip-172-31-85-191 ~]$ curl localhost:8000
 
-NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
-service/api          ClusterIP   10.96.120.49   <none>        8000/TCP   37h
-service/db           ClusterIP   10.96.66.86    <none>        5432/TCP   37h
-service/kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    37h
-service/rabbitmq     ClusterIP   10.96.22.114   <none>        5672/TCP   37h
+
+{"message":"Hello World!"}
+
+[ec2-user@ip-172-31-85-191 ~]$ kubectl get all
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/api-66c666d495-tx6w2        1/1     Running   0          8m34s
+pod/db-64b4b4f757-8wv2k         1/1     Running   0          8m34s
+pod/listener-787784f675-ksxkk   1/1     Running   0          8m34s
+pod/rabbitmq-64574d65fb-br5vt   1/1     Running   0          8m34s
+
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/api          ClusterIP   10.96.157.205   <none>        8000/TCP   8m34s
+service/db           ClusterIP   10.96.223.89    <none>        5432/TCP   8m34s
+service/kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP    9m52s
+service/rabbitmq     ClusterIP   10.96.12.163    <none>        5672/TCP   8m34s
 
 NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/api        1/1     1            1           37h
-deployment.apps/db         1/1     1            1           37h
-deployment.apps/listener   1/1     1            1           37h
-deployment.apps/rabbitmq   1/1     1            1           37h
+deployment.apps/api        1/1     1            1           8m34s
+deployment.apps/db         1/1     1            1           8m34s
+deployment.apps/listener   1/1     1            1           8m34s
+deployment.apps/rabbitmq   1/1     1            1           8m34s
 
 NAME                                  DESIRED   CURRENT   READY   AGE
-replicaset.apps/api-84c644846f        1         1         1       37h
-replicaset.apps/db-76b9688787         1         1         1       37h
-replicaset.apps/listener-7fc8675d8f   1         1         1       37h
-replicaset.apps/rabbitmq-7f66f5c6f8   1         1         1       37h
+replicaset.apps/api-66c666d495        1         1         1       8m34s
+replicaset.apps/db-64b4b4f757         1         1         1       8m34s
+replicaset.apps/listener-787784f675   1         1         1       8m34s
+replicaset.apps/rabbitmq-64574d65fb   1         1         1       8m34s
 
-
-❯ k  logs pod/listener-7fc8675d8f-jbp5q
+[ec2-user@ip-172-31-85-191 ~]$ kubectl logs pod/listener-787784f675-ksxkk
 creando las tablas
  [*] Waiting for messages. To exit press CTRL+C
+ [x] Received b'Hello World!'
+ejecutando tarea pesada
+tarea lista
+ [x] Received b'Hello World!'
+ejecutando tarea pesada
+tarea lista
+ [x] Received b'Hello World!'
+ejecutando tarea pesada
+tarea lista
+
 
 ```
 
