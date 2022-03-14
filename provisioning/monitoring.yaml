@@ -1,0 +1,58 @@
+---
+- name: Instalar sistema de monitoreo
+  hosts: talana_test
+  remote_user: ec2-user
+  become: true
+
+  tasks:
+    - name: Agregando repositorio de Grafana
+      become: true
+      yum_repository:
+        name: grafana
+        description: Repo de grafana
+        baseurl: https://packages.grafana.com/oss/rpm
+        gpgkey: https://packages.grafana.com/gpg.key
+        gpgcheck: no
+
+    - name: Instalando Grafana
+      become: true
+      yum:
+        name: "{{ packages }}"
+        state: latest
+        update_cache: yes
+      vars:
+        packages:
+        - grafana
+
+    - name: Habilitando el servicio de Grafana
+      become: true
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: Descargando Prometheus
+      get_url:
+        url: https://github.com/prometheus/prometheus/releases/download/v2.26.0/prometheus-2.26.0.linux-amd64.tar.gz
+        dest: /opt/
+        mode: '664'
+
+    - name: Descomprimiendo prometheus-2.26.0.linux-amd64.tar.gz
+      become: true
+      ansible.builtin.unarchive:
+        src: /opt/prometheus-2.26.0.linux-amd64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Copiando archivos de configuracion
+      copy:
+        src: prometheus.yaml
+        dest: /tmp/
+
+    - name: Configurando permisos
+      become: true
+      shell: "chmod 775 /opt/prometheus-2.26.0.linux-amd64/prometheus"
+
+    - name: Configurando rutas
+      become: true
+      shell: "mv /opt/prometheus-2.26.0.linux-amd64/prometheus /usr/local/bin/"

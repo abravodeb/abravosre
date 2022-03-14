@@ -1,0 +1,45 @@
+---
+- name: Despliegue de configuraciones básicas
+  hosts: talana_test
+  remote_user: ec2-user
+
+  tasks:
+   - name: Instalar paquetes básicos
+     become: true
+     yum:
+       name: "{{ packages }}"
+       state: latest
+       update_cache: yes
+     vars:
+       packages:
+       - git
+       - sysstat
+       - telnet
+       - nmap
+       - docker
+
+   - name: Habilitando el servicio Docker CE al inicio
+     become: true
+     service:
+       name: docker
+       state: started
+       enabled: yes
+
+   - name: Configurando usuarios y grupos
+     become: true
+     shell: "chown ec2-user:ec2-user /var/run/docker.sock && usermod -a -G docker ec2-user"
+
+   - name: Creando directorios
+     shell: "mkdir -p /home/ec2-user/.docker/cli-plugins"
+
+   - name: Descargando Docker Compose v2.2.3
+     shell: "curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o /home/ec2-user/.docker/cli-plugins/docker-compose"
+
+   - name: Instalando Docker Compose v2.2.3
+     shell: "chmod +x /home/ec2-user/.docker/cli-plugins/docker-compose"
+
+   - name: Configurando la zona horaria America/Santiago
+     become: true
+     timezone:
+       name: America/Santiago
+...

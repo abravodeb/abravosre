@@ -1,0 +1,42 @@
+---
+- name: Configuracion de Prometheus node_exporter
+  hosts: talana_test
+  remote_user: ec2-user
+  become: true
+
+  tasks:
+    - name: Descargando Prometheus 
+      get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
+        dest: /opt/
+        mode: '0755'
+
+    - name: Creado usuario nodeusr para el servcios Prometheus 
+      user:
+        name: nodeusr
+        shell: /bin/false
+
+    - name: Descargando y descomprime 
+      unarchive:
+        src: https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz
+        dest: /usr/local/bin
+        remote_src: yes
+
+    - name: Cambiando permisos al binario
+      shell: chown nodeusr:nodeusr /usr/local/bin/node_exporter-1.2.2.linux-amd64/node_exporter
+    
+
+    - name: Copiando archivo para el servicios Node Exporter 
+      template:
+        src: node_exporter.service
+        dest: /etc/systemd/system/node_exporter.service
+    
+    - name: Recargando el servicio y agregando al inicio del sistema
+      systemd:
+        name: node_exporter.service
+        state: reloaded
+        enabled: yes
+
+
+
+

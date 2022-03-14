@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: listener
+  name: listener
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: listener
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: listener
+    spec:
+      containers:
+        - args:
+            - sh
+            - /usr/src/app/script.sh
+          image: kainsaa/listener
+          name: listener
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/src/app2
+              name: listener-claim0
+      restartPolicy: Always
+      volumes:
+        - name: listener-claim0
+          persistentVolumeClaim:
+            claimName: listener-claim0
+status: {}
